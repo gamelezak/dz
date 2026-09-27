@@ -1,5 +1,2 @@
-server_php/config/.env
-server_php_api/config/.env
-/server_php/database/*.sqlite
-/server_php_api/database/*.sqlite
-__pycache__/
+# Database files
+*.sqlite

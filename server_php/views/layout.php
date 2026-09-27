@@ -1,4 +1,7 @@
-<?php  ?>
+<?php
+if (session_status() === PHP_SESSION_NONE) { @session_start(); }
+$__user = $_SESSION['user'] ?? null;
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -11,9 +14,18 @@
 <header>
     <a class="logo" href="/">Sport<span>Shop</span></a>
     <nav>
-        <a href="/">🏠 Каталог</a>
-        <a href="/cart">🛒 Корзина (<span class="cart-count">0</span>)</a>
-        <a href="/admin">⚙ Админка</a>
+        <a href="/">Каталог</a>
+        <a href="/cart">Корзина (<span class="cart-count">0</span>)</a>
+        <?php if ($__user): ?>
+            <?php if (in_array($__user['role'] ?? '', ['manager', 'admin'], true)): ?>
+                <a href="/admin">Админка</a>
+            <?php endif; ?>
+            <a href="/account"><?= htmlspecialchars($__user['username'], ENT_QUOTES) ?></a>
+            <a href="/logout">Выйти</a>
+        <?php else: ?>
+            <a href="/login">Войти</a>
+            <a href="/register">Регистрация</a>
+        <?php endif; ?>
     </nav>
 </header>
 
@@ -54,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-product]').forEach(btn => {
         btn.addEventListener('click', () => {
             addToCart(JSON.parse(btn.dataset.product));
-            btn.textContent = 'Добавлено ✓';
+            btn.textContent = 'Добавлено';
             setTimeout(() => btn.textContent = btn.dataset.label || 'В корзину', 900);
         });
     });
