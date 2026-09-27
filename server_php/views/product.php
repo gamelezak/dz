@@ -4,7 +4,7 @@ $e = fn ($v) => htmlspecialchars((string)$v, ENT_QUOTES);
 $p = $p ?? [];
 $images = array_values(array_filter(array_merge([$p['image'] ?? null], $p['extra_images'] ?? [])));
 ?>
-<a class="back-link" href="/">← Вернуться в каталог</a>
+<a class="back-link" href="/">Вернуться в каталог</a>
 <div class="product-page">
     <div class="gallery">
         <div class="main-img">
@@ -27,8 +27,8 @@ $images = array_values(array_filter(array_merge([$p['image'] ?? null], $p['extra
         <h1><?= $e($p['name']) ?></h1>
         <div class="price"><?= number_format((float)$p['price'], 0, '', ' ') ?> ₽</div>
         <div class="description"><?= $e($p['description'] ?: 'Описание отсутствует.') ?></div>
-        <button class="btn" data-label="🛒 Добавить в корзину"
-                data-product='<?= json_encode(["id"=>$p["id"],"name"=>$p["name"],"price"=>$p["price"],"image"=>$p["image"]], JSON_UNESCAPED_UNICODE) ?>'>🛒 Добавить в корзину</button>
+        <button class="btn" data-label="Добавить в корзину"
+                data-product='<?= json_encode(["id"=>$p["id"],"name"=>$p["name"],"price"=>$p["price"],"image"=>$p["image"]], JSON_UNESCAPED_UNICODE) ?>'>Добавить в корзину</button>
     </div>
 </div>
 <script>

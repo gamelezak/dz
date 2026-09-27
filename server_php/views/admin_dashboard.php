@@ -16,8 +16,11 @@ table.admin img{width:56px;height:56px;object-fit:cover;border-radius:8px}
     <h1 class="page-title">Админка — товары (<?= count($products) ?>)</h1>
     <div>
         <a class="btn" href="/admin/products/new">+ Добавить товар</a>
-        <span style="color:var(--gray)">👤 <?= $e($adminUser ?? '') ?></span>
-        <a class="btn small secondary" href="/admin/logout">Выйти</a>
+        <?php if (($adminUser['role'] ?? '') === 'admin'): ?>
+            <a class="btn small secondary" href="/admin/users">Пользователи</a>
+        <?php endif; ?>
+        <span style="color:var(--gray)"><?= $e($adminUser['username'] ?? '') ?> (<?= $e($adminUser['role'] ?? '') ?>)</span>
+        <a class="btn small secondary" href="/logout">Выйти</a>
     </div>
 </div>
 
