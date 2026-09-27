@@ -1,0 +1,60 @@
+<?php
+
+class Router
+{
+
+    private array $routes = [];
+
+    public function __construct()
+    {
+
+        $this->add('GET', '/',                 fn ($p) => (new PageController())->catalog());
+        $this->add('GET', '/index.html',       fn ($p) => (new PageController())->catalog());
+        $this->add('GET', '/product/{id}',     fn ($p) => (new PageController())->product((int)$p['id']));
+        $this->add('GET', '/cart',             fn () => (new PageController())->cart());
+        $this->add('GET', '/cart.html',        fn () => (new PageController())->cart());
+
+        $A = AdminPageController::class;
+        $this->add('GET',  '/admin',                    fn () => (new $A())->dashboard());
+        $this->add('GET',  '/admin/login',              fn () => (new $A())->showLogin());
+        $this->add('POST', '/admin/login',              fn () => (new $A())->login());
+        $this->add('GET',  '/admin/logout',             fn () => (new $A())->logout());
+        $this->add('GET',  '/admin/products/new',       fn () => (new $A())->showCreate());
+        $this->add('POST', '/admin/products',           fn () => (new $A())->store());
+        $this->add('GET',  '/admin/products/{id}/edit', fn ($p) => (new $A())->showEdit((int)$p['id']));
+        $this->add('POST', '/admin/products/{id}',      fn ($p) => (new $A())->update((int)$p['id']));
+        $this->add('POST', '/admin/products/{id}/delete', fn ($p) => (new $A())->destroy((int)$p['id']));
+
+        $this->add('GET',    '/api/products',            fn () => (new ProductController())->index());
+        $this->add('GET',    '/api/products/{id}',       fn ($p) => (new ProductController())->show((int)$p['id']));
+        $this->add('POST',   '/api/admin/login',         fn () => (new AdminAuthController())->login());
+        $this->add('POST',   '/api/admin/logout',        fn () => (new AdminAuthController())->logout());
+        $this->add('POST',   '/api/admin/products',      fn () => (new ProductController())->store());
+        $this->add('PUT',    '/api/admin/products/{id}', fn ($p) => (new ProductController())->update((int)$p['id']));
+        $this->add('DELETE', '/api/admin/products/{id}', fn ($p) => (new ProductController())->destroy((int)$p['id']));
+    }
+
+    public function add(string $method, string $pattern, callable $handler): void
+    {
+        $this->routes[$method][] = [$pattern, $handler];
+    }
+
+    public function dispatch(string $method, string $uri): void
+    {
+        $uri  = rtrim(rawurldecode($uri), '/') ?: '/';
+        $best = null; 
+
+        foreach ($this->routes[$method] ?? [] as [$pattern, $handler]) {
+            $regex = preg_quote($pattern, '#');
+
+            $regex = preg_replace('#\\\\\{(\w+)\\\\\}#', '(?P<$1>[^/]+)', $regex);
+            if (preg_match('#^' . $regex . '$#iu', $uri, $m)) {
+                $params = array_filter($m, 'is_string', ARRAY_FILTER_USE_KEY);
+                $handler($params);
+                return;
+            }
+        }
+
+        Response::json(['detail' => 'Не найдено: ' . $uri], 404);
+    }
+}
