@@ -10,6 +10,17 @@ class Router
 
         $this->add('GET',    '/api/products',            fn () => (new ProductController())->index());
         $this->add('GET',    '/api/products/{id}',       fn ($p) => (new ProductController())->show((int)$p['id']));
+
+        $U = AuthController::class;
+        $this->add('POST',   '/api/auth/register',       fn () => (new $U())->register());
+        $this->add('POST',   '/api/auth/login',          fn () => (new $U())->login());
+        $this->add('POST',   '/api/auth/logout',         fn () => (new $U())->logout());
+        $this->add('GET',    '/api/auth/me',             fn () => (new $U())->me());
+        $this->add('GET',    '/api/users',               fn () => (new $U())->index());
+        $this->add('POST',   '/api/users',               fn () => (new $U())->store());
+        $this->add('PUT',    '/api/users/{id}/role',     fn ($p) => (new $U())->updateRole((int)$p['id']));
+        $this->add('DELETE', '/api/users/{id}',          fn ($p) => (new $U())->destroy((int)$p['id']));
+
         $this->add('POST',   '/api/admin/login',         fn () => (new AdminAuthController())->login());
         $this->add('POST',   '/api/admin/logout',        fn () => (new AdminAuthController())->logout());
         $this->add('POST',   '/api/admin/products',      fn () => (new ProductController())->store());
@@ -25,7 +36,7 @@ class Router
     public function dispatch(string $method, string $uri): void
     {
         $uri  = rtrim(rawurldecode($uri), '/') ?: '/';
-        $best = null; 
+        $best = null;
 
         foreach ($this->routes[$method] ?? [] as [$pattern, $handler]) {
             $regex = preg_quote($pattern, '#');

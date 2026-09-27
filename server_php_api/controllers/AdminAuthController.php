@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * JSON-API входа/выхода сотрудников (manager/admin).
+ * Возвращает токен сессии, который передаётся через ?token= или заголовок X-Admin-Token.
+ */
 class AdminAuthController extends Controller
 {
     public function login(): void
@@ -7,17 +11,22 @@ class AdminAuthController extends Controller
         $username = trim((string)$this->request->input('username', ''));
         $password = (string)$this->request->input('password', '');
 
-        $okUser = hash_equals((string)App::config('admin.username'), $username);
-        $okPass = password_verify($password, (string)App::config('admin.password_hash'));
-
-        if (!$okUser || !$okPass) {
+        $user = (new UserModel())->findByUsername($username);
+        if ($user === null || !password_verify($password, (string)$user['password_hash'])) {
             Response::json(['detail' => 'Неверный логин или пароль'], 401);
         }
+        if (Auth::roleLevel((string)$user['role']) < Auth::roleLevel(Auth::ROLE_MANAGER)) {
+            Response::json(['detail' => 'Недостаточно прав: требуется роль manager или admin'], 403);
+        }
 
-        $ttl   = (int)App::config('admin.session_ttl');
+        $ttl   = max(600, (int)App::config('auth.session_ttl'));
         $token = (new AdminSessionModel())->create($username, $ttl);
 
-        Response::json(['token' => $token, 'expires_in' => $ttl]);
+        Response::json([
+            'token'      => $token,
+            'expires_in' => $ttl,
+            'user'       => ['username' => $username, 'role' => $user['role']],
+        ]);
     }
 
     public function logout(): void

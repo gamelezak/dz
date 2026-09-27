@@ -28,6 +28,7 @@ function env(string $key, string $default = ''): string
 }
 
 $adminPassword = env('ADMIN_PASSWORD', 'admin123');
+$managerPassword = env('MANAGER_PASSWORD', 'manager123');
 
 return [
     'db' => [
@@ -41,10 +42,21 @@ return [
         'sqlite_path' => __DIR__ . '/../database/sportshop.sqlite',
     ],
 
-    'admin' => [
-        'username'      => env('ADMIN_USER', 'admin'),
-        'password_hash' => password_hash($adminPassword, PASSWORD_DEFAULT),
-        'session_ttl'   => (int)env('ADMIN_SESSION_TTL', '7200'),
+    'auth' => [
+        // Пользователи, создаваемые при инициализации БД (database/init.php).
+        'seed_admin' => [
+            'username' => env('ADMIN_USER', 'admin'),
+            'email'    => env('ADMIN_EMAIL', 'admin@sportshop.local'),
+            'password' => $adminPassword,
+            'role'     => 'admin',
+        ],
+        'seed_manager' => [
+            'username' => env('MANAGER_USER', 'manager'),
+            'email'    => env('MANAGER_EMAIL', 'manager@sportshop.local'),
+            'password' => $managerPassword,
+            'role'     => 'manager',
+        ],
+        'session_ttl' => (int)env('SESSION_TTL', '7200'),
     ],
 
     'uploads' => [
