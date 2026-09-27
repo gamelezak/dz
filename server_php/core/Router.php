@@ -19,11 +19,19 @@ class Router
         $this->add('POST', '/login',      fn () => (new $U())->login());
         $this->add('GET',  '/register',   fn () => (new $U())->showRegister());
         $this->add('POST', '/register',   fn () => (new $U())->register());
-        $this->add('GET',  '/account',    fn () => (new $U())->account());
-        $this->add('GET',  '/logout',     fn () => (new $U())->logout());
+        $this->add('GET',  '/account',    fn () => (new AuthController())->account());
+        $this->add('GET',  '/logout',     fn () => (new AuthController())->logout());
+
+        $O = OrderController::class;
+        $this->add('GET',  '/checkout',          fn () => (new $O())->showCheckout());
+        $this->add('POST', '/checkout',          fn () => (new $O())->create());
+        $this->add('GET',  '/order/{id}',        fn ($p) => (new $O())->show((int)$p['id']));
+        $this->add('POST', '/order/{id}/cancel', fn ($p) => (new $O())->cancel((int)$p['id']));
 
         $A = AdminPageController::class;
         $this->add('GET',  '/admin',                      fn () => (new $A())->dashboard());
+        $this->add('GET',  '/admin/orders',               fn () => (new $A())->orders());
+        $this->add('POST', '/admin/orders/{id}/status',   fn ($p) => (new $A())->updateOrderStatus((int)$p['id']));
         $this->add('GET',  '/admin/users',                fn () => (new $A())->users());
         $this->add('POST', '/admin/users/{id}/role',      fn ($p) => (new $A())->updateUserRole((int)$p['id']));
         $this->add('GET',  '/admin/products/new',         fn () => (new $A())->showCreate());

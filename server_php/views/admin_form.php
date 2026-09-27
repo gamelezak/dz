@@ -7,18 +7,7 @@ $val = function ($key) use ($product, $old) {
     return $product[$key] ?? '';
 };
 ?>
-<style>
-.admin-form{background:
-.admin-form label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px}
-.admin-form input,.admin-form textarea{padding:10px;border:1px solid 
-.admin-form textarea{min-height:90px;resize:vertical}
-.flash.err{background:
-.hint{font-weight:400;color:var(--gray);font-size:12px}
-.cur-imgs{display:flex;gap:8px;flex-wrap:wrap}
-.cur-imgs img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid 
-</style>
-
-<a class="back-link" href="/admin">← В админку</a>
+<a class="back-link" href="/admin">Назад в админку</a>
 <h1 class="page-title"><?= $isEdit ? 'Редактирование товара' : 'Новый товар' ?></h1>
 
 <?php if (!empty($errors)): ?>
@@ -45,7 +34,8 @@ $val = function ($key) use ($product, $old) {
     </label>
 
     <?php if ($isEdit && $product['image']): ?>
-    <div><b style="font-size:14px">Текущая картинка:</b>
+    <div>
+        <span class="img-caption">Текущая картинка:</span>
         <div class="cur-imgs"><img src="/images/products/<?= $e($product['image']) ?>" alt=""></div>
     </div>
     <?php endif; ?>
@@ -55,7 +45,8 @@ $val = function ($key) use ($product, $old) {
     </label>
 
     <?php if ($isEdit && !empty($product['extra_images'])): ?>
-    <div><b style="font-size:14px">Текущая галерея:</b>
+    <div>
+        <span class="img-caption">Текущая галерея:</span>
         <div class="cur-imgs">
             <?php foreach ($product['extra_images'] as $n): ?>
                 <img src="/images/products/<?= $e($n) ?>" alt="">
@@ -64,7 +55,7 @@ $val = function ($key) use ($product, $old) {
     </div>
     <?php endif; ?>
 
-    <div>
+    <div class="form-actions">
         <button class="btn" type="submit"><?= $isEdit ? 'Сохранить' : 'Добавить товар' ?></button>
         <a class="btn secondary" href="/admin">Отмена</a>
     </div>

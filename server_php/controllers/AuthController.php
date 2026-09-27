@@ -103,14 +103,30 @@ class AuthController extends Controller
         $this->redirect('/login');
     }
 
-    /** Личный кабинет покупателя. */
+    /** Личный кабинет покупателя: данные аккаунта + история заказов. */
     public function account(): void
     {
         Auth::requireRoleHtml(Auth::ROLE_USER);
+
+        $orders = [];
+        $detail = null;
+        if ($orderId = (int)$this->request->query('order', 0)) {
+            $order = (new OrderModel())->find($orderId);
+            // Смотреть заказ может только его владелец (или менеджер/админ).
+            if ($order !== null &&
+                ((int)$order['user_id'] === (int)Auth::id() || Auth::can(Auth::ROLE_MANAGER))) {
+                $detail = $order;
+            }
+        } else {
+            $orders = (new OrderModel())->forUser((int)Auth::id());
+        }
+
         View::renderPage('account', [
             'pageTitle' => 'Личный кабинет — SportShop',
             'user'      => Auth::user(),
             'flash'     => $this->pullFlash(),
+            'orders'    => $orders,
+            'detail'    => $detail,
         ]);
     }
 
@@ -138,6 +154,6 @@ class AuthController extends Controller
             $errors[] = 'Пароль должен содержать минимум 6 символов.';
         }
 
-        return [['username' => $username, 'email' => $email, 'password' => ''], $errors];
+        return [['username' => $username, 'email' => $email, 'password' => $password], $errors];
     }
 }

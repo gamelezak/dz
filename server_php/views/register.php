@@ -1,5 +1,5 @@
 <?php $e = fn ($v) => htmlspecialchars((string)$v, ENT_QUOTES); ?>
-<div style="max-width:380px;margin:60px auto">
+<div class="auth-wrap">
     <h1 class="page-title">Регистрация</h1>
     <?php if (!empty($errors)): ?>
         <?php foreach ((array)$errors as $err): ?>
@@ -19,7 +19,8 @@
         </label>
         <button class="btn" type="submit">Создать аккаунт</button>
     </form>
-    <p style="color:var(--gray);font-size:14px">
-        Новый аккаунт создается с ролью «user». Уже есть аккаунт? <a href="/login">Войти</a>.
+    <p class="auth-note">
+        Новый аккаунт создается с ролью «user».<br>
+        Уже есть аккаунт? <a href="/login">Войти</a>.
     </p>
 </div>

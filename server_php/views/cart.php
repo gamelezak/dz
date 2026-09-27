@@ -75,9 +75,8 @@
     });
 
     document.getElementById('cart-checkout').addEventListener('click', () => {
-        alert('Спасибо за заказ! Мы свяжемся с вами для подтверждения.');
-        saveCart([]);
-        renderCart();
+        // Переход на реальное оформление заказа (серверная валидация и создание заказа).
+        window.location.href = '/checkout';
     });
 
     window.addEventListener('storage', renderCart);

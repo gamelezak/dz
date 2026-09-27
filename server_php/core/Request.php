@@ -72,6 +72,12 @@ class Request
         return $this->post[$key] ?? $this->json[$key] ?? $this->get[$key] ?? $default;
     }
 
+    /** Все POST-параметры (в т.ч. разобранные из multipart/json тела). */
+    public function all(): array
+    {
+        return $this->post + $this->json;
+    }
+
     public function query(string $key, $default = null)
     {
         return $this->get[$key] ?? $default;

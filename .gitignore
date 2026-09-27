@@ -1,3 +1,2 @@
-# Environment
-.env
-*.env.local
+# Database files
+*.sqlite

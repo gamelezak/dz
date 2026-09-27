@@ -1,5 +1,5 @@
 <?php $e = fn ($v) => htmlspecialchars((string)$v, ENT_QUOTES); ?>
-<div style="max-width:380px;margin:60px auto">
+<div class="auth-wrap">
     <h1 class="page-title">Вход в аккаунт</h1>
     <?php if (!empty($flash['msg'])): ?>
         <div class="flash <?= $e($flash['type'] ?? 'ok') ?>"><?= $e($flash['msg']) ?></div>
@@ -13,8 +13,8 @@
         </label>
         <button class="btn" type="submit">Войти</button>
     </form>
-    <p style="color:var(--gray);font-size:14px">
-        Нет аккаунта? <a href="/register">Зарегистрируйтесь</a>.
+    <p class="auth-note">
+        Нет аккаунта? <a href="/register">Зарегистрируйтесь</a>.<br>
         Управление товарами доступно сотрудникам с ролью manager или admin.
     </p>
 </div>

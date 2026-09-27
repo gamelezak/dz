@@ -9,12 +9,14 @@ class AdminPageController extends Controller
 {
     private ProductModel $products;
     private UserModel $users;
+    private OrderModel $orders;
 
     public function __construct()
     {
         parent::__construct();
         $this->products = new ProductModel();
         $this->users    = new UserModel();
+        $this->orders   = new OrderModel();
         Auth::startSession();
     }
 
@@ -55,6 +57,33 @@ class AdminPageController extends Controller
             'flash'     => $this->pullFlash(),
             'adminUser' => Auth::user(),
         ]);
+    }
+
+    /** Список заказов (manager и admin). */
+    public function orders(): void
+    {
+        $this->requireManager();
+        View::renderPage('admin_orders', [
+            'pageTitle' => 'Заказы — админка SportShop',
+            'orders'    => $this->orders->all(),
+            'statuses'  => OrderModel::STATUSES,
+            'flash'     => $this->pullFlash(),
+            'adminUser' => Auth::user(),
+        ]);
+    }
+
+    /** Смена статуса заказа (manager и admin). */
+    public function updateOrderStatus(int $id): void
+    {
+        $this->requireManager();
+
+        $status = trim((string)$this->request->input('status', ''));
+        if ($this->orders->setStatus($id, $status)) {
+            $this->flash('Статус заказа №' . $id . ' изменён на «' . $status . '».');
+        } else {
+            $this->flash('Не удалось изменить статус (заказ не найден или недопустимый статус)', 'err');
+        }
+        $this->redirect('/admin/orders');
     }
 
     /** Список пользователей и распределение ролей (только admin). */
