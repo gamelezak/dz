@@ -1,0 +1,10 @@
+# Apache/OpenServer: все запросы идут во front controller index.php,
+# кроме реально существующих файлов (style.css, api.js, картинки товаров).
+Options -Indexes
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^ index.php [L]
